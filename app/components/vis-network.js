@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import { DataSet, Network } from "vis-network/standalone/esm/vis-network";
 import { parse } from 'recast';
+import { findQuery } from 'ast-node-finder';
 
 const _nodes = [
   { id: 1, label: "Program" },
@@ -15,6 +16,14 @@ const _edges = [
 const query_map = {};
 
 export default Component.extend({
+  theme: 'solarized light',
+  mode: 'javascript',
+
+  code: `let a = 1; hello(); foo.bar();`,
+
+  init() {
+    this._super(...arguments);
+  },
 
   didInsertElement() {
     this._super(...arguments);
@@ -30,7 +39,7 @@ foo.bar();
 
   addQuery(id, node) {
     let str = '';
-    
+
     switch(node.type) {
       case 'VariableDeclarator':
         str  = `
@@ -41,12 +50,13 @@ foo.bar();
         break;
 
       case 'CallExpression':
-            str = `
+        str = `
             root.find(j.CallExpression, {
             callee: { name: '${node.callee.name}' }
             })
             `;
- 
+        str = findQuery(node);
+
         break;
 
       default:
@@ -78,7 +88,7 @@ foo.bar();
         case 'VariableDeclaration':
 
           n.declarations.forEach(d => {
-            
+
             this.createNode(d, startId++);
           });
 
@@ -119,9 +129,10 @@ foo.bar();
       }
     };
     const network = new Network(container, data, options);
-    network.on("selectNode", function (params) {
+    network.on("selectNode", (params) => {
         console.log('selectNode Event:', params);
       console.log(query_map[params.nodes[0]]);
+      this.set('transform', query_map[params.nodes[0]]);
     });
   }
 });

@@ -1,1 +1,22 @@
-{{yield}}
+<div class="grid-row">
+<div id="editor">
+    {{ivy-codemirror 
+      value=code 
+      options=(hash 
+      lineNumbers=true 
+      mode=mode 
+      matchBrackets=true
+      theme=theme)
+      valueUpdated=(action (mut code))
+    }}
+    {{ivy-codemirror 
+      value=transform 
+      options=(hash 
+      lineNumbers=true 
+      mode=mode 
+      theme=theme 
+      foldGutter=true 
+      readOnly=true)}}
+</div>
+<div id="mynetwork"></div>
+</div>

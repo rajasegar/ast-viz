@@ -11,6 +11,15 @@ module.exports = function(defaults) {
           path: true 
         }
       }
+    },
+    codemirror: {
+      themes: ['solarized'],
+      modes: ['javascript', 'handlebars'],
+      addonFiles: [
+        'fold/foldcode.js', 
+        'fold/foldgutter.js',
+        'edit/matchbrackets.js'
+      ]
     }
   });
 
