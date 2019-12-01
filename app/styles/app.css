@@ -1,0 +1,15 @@
+#editor {
+	position: absolute;
+	padding: 1em;
+	right: 50%;
+}
+#mynetwork {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	left: 50%;
+	min-height: 100vh;
+	border-left: 1px solid lightgray;
+	background: white;
+}
