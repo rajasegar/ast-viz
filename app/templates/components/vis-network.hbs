@@ -1,5 +1,6 @@
 <div class="grid-row">
 <div id="editor">
+  <h2>Source code:</h2>
     {{ivy-codemirror 
       value=code 
       options=(hash 
@@ -7,8 +8,9 @@
       mode=mode 
       matchBrackets=true
       theme=theme)
-      valueUpdated=(action (mut code))
+      valueUpdated=(action 'buildTree')
     }}
+    <h2>Transform code:</h2>
     {{ivy-codemirror 
       value=transform 
       options=(hash 
