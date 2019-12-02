@@ -6,26 +6,24 @@ for(var s=arguments.length,d=new Array(s),f=0;f<s;f++)d[f]=arguments[f]
 return l=function(e,t){return!t||"object"!==o(t)&&"function"!=typeof t?a(e):t}(this,(e=i(r)).call.apply(e,[this].concat(d))),u(a(l),"modulePrefix",n.default.modulePrefix),u(a(l),"podModulePrefix",n.default.podModulePrefix),u(a(l),"Resolver",t.default),l}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function")
 e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&l(e,t)}(r,Ember.Application),r}()
 e.default=s,(0,r.default)(s,n.default.modulePrefix)})),define("ast-viz/components/ivy-codemirror",["exports","ivy-codemirror/components/ivy-codemirror"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ast-viz/components/vis-network",["exports","vis-network/standalone/esm/vis-network","recast","ast-node-finder"],(function(e,t,r,n){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-var o=[{id:1,label:"Program"},{id:2,label:"Body"}],i=[{from:1,to:2}],a={},l=Ember.Component.extend({theme:"solarized light",mode:"javascript",code:"let a = 1; hello(); foo.bar();",init:function(){this._super.apply(this,arguments)},didInsertElement:function(){this._super.apply(this,arguments)
-var e="\nlet a = 1;\nhello();\nfoo.bar();\n"
-this.buildTree(e)},addQuery:function(e,t){var r=""
-switch(t.type){case"VariableDeclarator":r="\n            root.find(j.VariableDeclarator, {\n            id: { name: '".concat(t.id.name,"' }\n            })\n            ")
+var o={},i=Ember.Component.extend({theme:"solarized light",mode:"javascript",code:"let a = 1; \nhello();\nfoo.bar();",init:function(){this._super.apply(this,arguments)},didInsertElement:function(){this._super.apply(this,arguments),this._buildTree()},addQuery:function(e,t){var r=""
+switch(t.type){case"VariableDeclarator":case"CallExpression":r=(0,n.findQuery)(t)
 break
-case"CallExpression":r="\n            root.find(j.CallExpression, {\n            callee: { name: '".concat(t.callee.name,"' }\n            })\n            "),r=(0,n.findQuery)(t)
+default:console.log("addQuery => ",t.type)}o[e]=r},createNode:function(e,t){var r=t+1,n={id:r,label:e.type},o={from:t,to:r}
+this.addQuery(r,e),this.get("nodes").push(n),this.get("edges").push(o)},_buildTree:function(){var e=this
+this.set("nodes",[{id:1,label:"Program"},{id:2,label:"Body"}]),this.set("edges",[{from:1,to:2}])
+var n=(0,r.parse)(this.get("code"))
+console.log(n)
+var i=2
+n.program.body.forEach((function(t){var r=++i
+switch(e.get("nodes").push({id:r,label:t.type}),e.get("edges").push({from:2,to:r}),t.type){case"VariableDeclaration":t.declarations.forEach((function(t){e.createNode(t,i++)}))
 break
-default:console.log("addQuery => ",t.type)}a[e]=r},createNode:function(e,t){var r=t+1,n={id:r,label:e.type},a={from:t,to:r}
-this.addQuery(r,e),o.push(n),i.push(a)},buildTree:function(e){var n=this,l=(0,r.parse)(e)
-console.log(l)
-var u=2
-l.program.body.forEach((function(e){var t=++u
-switch(o.push({id:t,label:e.type}),i.push({from:2,to:t}),e.type){case"VariableDeclaration":e.declarations.forEach((function(e){n.createNode(e,u++)}))
+case"ExpressionStatement":e.createNode(t.expression,i++)
 break
-case"ExpressionStatement":n.createNode(e.expression,u++)
-break
-default:console.log("buildTree => ",e.type)}}))
-var s=new t.DataSet(o),d=new t.DataSet(i),f=document.getElementById("mynetwork"),c={nodes:s,edges:d}
-new t.Network(f,c,{nodes:{shape:"box"},edges:{arrows:"to"},layout:{hierarchical:{direction:"UD"}}}).on("selectNode",(function(e){console.log("selectNode Event:",e),console.log(a[e.nodes[0]]),n.set("transform",a[e.nodes[0]])}))}})
-e.default=l})),define("ast-viz/controllers/application",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
+default:console.log("buildTree => ",t.type)}}))
+var a=new t.DataSet(this.get("nodes")),l=new t.DataSet(this.get("edges")),u=document.getElementById("mynetwork"),s={nodes:a,edges:l}
+new t.Network(u,s,{nodes:{shape:"box"},edges:{arrows:"to"},layout:{hierarchical:{direction:"LR"}}}).on("selectNode",(function(t){e.set("transform",o[t.nodes[0]])}))},actions:{buildTree:function(e){this.set("code",e),this._buildTree()}}})
+e.default=i})),define("ast-viz/controllers/application",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Ember.Controller.extend({theme:"solarized light"})
 e.default=t})),define("ast-viz/controllers/index",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Ember.Controller.extend({})
@@ -67,8 +65,8 @@ var t=Ember.Route.extend({})
 e.default=t})),define("ast-viz/serializers/-default",["exports","@ember-data/serializer/json"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ast-viz/serializers/-json-api",["exports","@ember-data/serializer/json-api"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ast-viz/serializers/-rest",["exports","@ember-data/serializer/rest"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ast-viz/services/code-mirror",["exports","ivy-codemirror/services/code-mirror"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ast-viz/templates/application",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Ember.HTMLBars.template({id:"FhLX4HRh",block:'{"symbols":[],"statements":[[7,"h1",true],[8],[0,"ast-viz"],[9],[0,"\\n"],[1,[22,"outlet"],false]],"hasEval":false}',meta:{moduleName:"ast-viz/templates/application.hbs"}})
 e.default=t})),define("ast-viz/templates/components/vis-network",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-var t=Ember.HTMLBars.template({id:"nu1yezZ5",block:'{"symbols":[],"statements":[[7,"div",true],[10,"class","grid-row"],[8],[0,"\\n"],[7,"div",true],[10,"id","editor"],[8],[0,"\\n    "],[1,[28,"ivy-codemirror",null,[["value","options","valueUpdated"],[[24,["code"]],[28,"hash",null,[["lineNumbers","mode","matchBrackets","theme"],[true,[24,["mode"]],true,[24,["theme"]]]]],[28,"action",[[23,0,[]],[28,"mut",[[24,["code"]]],null]],null]]]],false],[0,"\\n    "],[1,[28,"ivy-codemirror",null,[["value","options"],[[24,["transform"]],[28,"hash",null,[["lineNumbers","mode","theme","foldGutter","readOnly"],[true,[24,["mode"]],[24,["theme"]],true,true]]]]]],false],[0,"\\n"],[9],[0,"\\n"],[7,"div",true],[10,"id","mynetwork"],[8],[9],[0,"\\n"],[9]],"hasEval":false}',meta:{moduleName:"ast-viz/templates/components/vis-network.hbs"}})
+var t=Ember.HTMLBars.template({id:"mTfSVoGP",block:'{"symbols":[],"statements":[[7,"div",true],[10,"class","grid-row"],[8],[0,"\\n"],[7,"div",true],[10,"id","editor"],[8],[0,"\\n  "],[7,"h2",true],[8],[0,"Source code:"],[9],[0,"\\n    "],[1,[28,"ivy-codemirror",null,[["value","options","valueUpdated"],[[24,["code"]],[28,"hash",null,[["lineNumbers","mode","matchBrackets","theme"],[true,[24,["mode"]],true,[24,["theme"]]]]],[28,"action",[[23,0,[]],"buildTree"],null]]]],false],[0,"\\n    "],[7,"h2",true],[8],[0,"Transform code:"],[9],[0,"\\n    "],[1,[28,"ivy-codemirror",null,[["value","options"],[[24,["transform"]],[28,"hash",null,[["lineNumbers","mode","theme","foldGutter","readOnly"],[true,[24,["mode"]],[24,["theme"]],true,true]]]]]],false],[0,"\\n"],[9],[0,"\\n"],[7,"div",true],[10,"id","mynetwork"],[8],[9],[0,"\\n"],[9]],"hasEval":false}',meta:{moduleName:"ast-viz/templates/components/vis-network.hbs"}})
 e.default=t})),define("ast-viz/templates/index",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Ember.HTMLBars.template({id:"Oz6L4RLz",block:'{"symbols":[],"statements":[[5,"vis-network",[],[[],[]]]],"hasEval":false}',meta:{moduleName:"ast-viz/templates/index.hbs"}})
 e.default=t})),define("ast-viz/transforms/boolean",["exports","@ember-data/serializer/-private"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.BooleanTransform}})})),define("ast-viz/transforms/date",["exports","@ember-data/serializer/-private"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.DateTransform}})})),define("ast-viz/transforms/number",["exports","@ember-data/serializer/-private"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.NumberTransform}})})),define("ast-viz/transforms/string",["exports","@ember-data/serializer/-private"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.StringTransform}})})),define("ast-viz/config/environment",[],(function(){try{var e="ast-viz/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),r={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(r,"__esModule",{value:!0}),r}catch(n){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("ast-viz/app").default.create({name:"ast-viz",version:"0.0.0+6ace7dd9"})
+return Object.defineProperty(r,"__esModule",{value:!0}),r}catch(n){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("ast-viz/app").default.create({name:"ast-viz",version:"0.0.0+3a94fd5b"})
